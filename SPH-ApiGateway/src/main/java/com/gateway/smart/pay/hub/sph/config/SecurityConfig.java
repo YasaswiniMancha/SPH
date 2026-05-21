@@ -47,7 +47,6 @@ public class SecurityConfig {
                 .anyRequest().denyAll()
             )
             .oauth2ResourceServer(oauth -> oauth.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter)));
-
         return http.build();
     }
 
