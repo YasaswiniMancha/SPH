@@ -1,0 +1,25 @@
+sph-cloud-config:
+  build:
+    context: .
+    dockerfile: Dockerfile
+    args:
+      MODULE: SPH-CloudConfigManagement
+  image: smartpayhub/sph-cloud-config:latest
+  container_name: sph-cloud-config
+  environment:
+    SERVER_PORT: 8888
+    RDS_HOST: ${RDS_HOST:-localhost}
+    DB_USER: ${DB_USER:-postgres}
+    DB_PASSWORD: ${DB_PASSWORD:-password}
+    REDIS_HOST: ${REDIS_HOST:-localhost}
+    REDIS_PORT: ${REDIS_PORT:-6379}
+    AWS_REGION: ${AWS_REGION:-us-east-1}
+    AWS_S3_BUCKET: ${AWS_S3_BUCKET:-smartpayhub-configs}
+    AWS_LAMBDA_FUNCTION: ${AWS_LAMBDA_FUNCTION:-config-update-notifier}
+    KAFKA_SERVERS: ${KAFKA_SERVERS:-localhost:9092}
+  ports:
+    - "8888:8888"
+  depends_on:
+    - sph-api-gateway
+  networks:
+    - smartpayhub-network

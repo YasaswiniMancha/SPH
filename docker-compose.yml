@@ -1,0 +1,119 @@
+services:
+  sph-cloud-config:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: SPH-CloudConfigManagement
+    image: smartpayhub/sph-cloud-config:latest
+    container_name: sph-cloud-config
+    environment:
+      SERVER_PORT: 8888
+    ports:
+      - "8888:8888"
+
+  sph-api-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: SPH-ApiGateway
+    image: smartpayhub/sph-api-gateway:latest
+    container_name: sph-api-gateway
+    environment:
+      SERVER_PORT: 8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      - sph-cloud-config
+
+  sph-auth-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: SPH-AuthService
+    image: smartpayhub/sph-auth-service:latest
+    container_name: sph-auth-service
+    environment:
+      SERVER_PORT: 8081
+    ports:
+      - "8081:8081"
+
+  sph-payments-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: SPH-PaymentsService
+    image: smartpayhub/sph-payments-service:latest
+    container_name: sph-payments-service
+    environment:
+      SERVER_PORT: 8082
+    ports:
+      - "8082:8082"
+
+  sph-wallet-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: SPH-WalletService
+    image: smartpayhub/sph-wallet-service:latest
+    container_name: sph-wallet-service
+    environment:
+      SERVER_PORT: 8083
+    ports:
+      - "8083:8083"
+
+  sph-merchant-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: SPH-MerchantService
+    image: smartpayhub/sph-merchant-service:latest
+    container_name: sph-merchant-service
+    environment:
+      SERVER_PORT: 8084
+    ports:
+      - "8084:8084"
+
+  sph-settlement-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: SPH-SettlementService
+    image: smartpayhub/sph-settlement-service:latest
+    container_name: sph-settlement-service
+    environment:
+      SERVER_PORT: 8085
+    ports:
+      - "8085:8085"
+
+  sph-transaction-history:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: SPH-TransactionHistory
+    image: smartpayhub/sph-transaction-history:latest
+    container_name: sph-transaction-history
+    environment:
+      SERVER_PORT: 8086
+    ports:
+      - "8086:8086"
+
+  sph-notifications-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: SPH-NotificationsService
+    image: smartpayhub/sph-notifications-service:latest
+    container_name: sph-notifications-service
+    environment:
+      SERVER_PORT: 8087
+    ports:
+      - "8087:8087"
