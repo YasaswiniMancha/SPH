@@ -1,0 +1,38 @@
+{{- range .Values.services }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .name }}-config
+data:
+  SPRING_PROFILES_ACTIVE: "{{ $.Values.env.spring_profiles_active }}"
+  SPRING_DATASOURCE_URL: "{{ $.Values.env.database_url }}"
+  SPRING_DATASOURCE_USERNAME: "{{ $.Values.env.database_username }}"
+  REDIS_HOST: "{{ $.Values.env.redis_host }}"
+  KAFKA_BOOTSTRAP_SERVERS: "{{ $.Values.env.kafka_bootstrap_servers }}"
+  {{- if $.Values.kafkaProducer }}
+  SPRING_KAFKA_PRODUCER_ACKS: "{{ $.Values.kafkaProducer.acks }}"
+  SPRING_KAFKA_PRODUCER_RETRIES: "{{ $.Values.kafkaProducer.retries }}"
+  SPRING_KAFKA_PRODUCER_LINGER_MS: "{{ $.Values.kafkaProducer.lingerMs }}"
+  SPRING_KAFKA_PRODUCER_BATCH_SIZE: "{{ $.Values.kafkaProducer.batchSize }}"
+  SPRING_KAFKA_PRODUCER_BUFFER_MEMORY: "{{ $.Values.kafkaProducer.bufferMemory }}"
+  SPRING_KAFKA_PRODUCER_COMPRESSION_TYPE: "{{ $.Values.kafkaProducer.compressionType }}"
+  SPRING_KAFKA_PRODUCER_ENABLE_IDEMPOTENCE: "{{ $.Values.kafkaProducer.enableIdempotence }}"
+  SPRING_KAFKA_PRODUCER_MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION: "{{ $.Values.kafkaProducer.maxInFlightRequestsPerConnection }}"
+  SPRING_KAFKA_PRODUCER_DELIVERY_TIMEOUT_MS: "{{ $.Values.kafkaProducer.deliveryTimeoutMs }}"
+  {{- end }}
+
+  {{- if $.Values.hikari }}
+  SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE: "{{ $.Values.hikari.maximumPoolSize }}"
+  SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE: "{{ $.Values.hikari.minimumIdle }}"
+  SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT: "{{ $.Values.hikari.connectionTimeout }}"
+  SPRING_DATASOURCE_HIKARI_VALIDATION_TIMEOUT: "{{ $.Values.hikari.validationTimeout }}"
+  SPRING_DATASOURCE_HIKARI_MAX_LIFETIME: "{{ $.Values.hikari.maxLifetime }}"
+  SPRING_DATASOURCE_HIKARI_LEAK_DETECTION_THRESHOLD: "{{ $.Values.hikari.leakDetectionThreshold }}"
+  SPRING_DATASOURCE_HIKARI_DATASOURCE_PROPS_CACHE_PREP_STMTS: "{{ $.Values.hikari.dataSourceProperties.cachePrepStmts }}"
+  SPRING_DATASOURCE_HIKARI_DATASOURCE_PROPS_PREP_STMT_CACHE_SIZE: "{{ $.Values.hikari.dataSourceProperties.prepStmtCacheSize }}"
+  SPRING_DATASOURCE_HIKARI_DATASOURCE_PROPS_PREP_STMT_CACHE_SQL_LIMIT: "{{ $.Values.hikari.dataSourceProperties.prepStmtCacheSqlLimit }}"
+  SPRING_DATASOURCE_HIKARI_DATASOURCE_PROPS_USE_SERVER_PREP_STMTS: "{{ $.Values.hikari.dataSourceProperties.useServerPrepStmts }}"
+  {{- end }}
+---
+{{- end }}
+

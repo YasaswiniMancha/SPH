@@ -1,0 +1,88 @@
+spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+---
+
+spring:
+  profiles: dev
+  application:
+    name: sph-api-gateway
+  server:
+    port: ${SERVER_PORT:8080}
+  cloud:
+    gateway:
+      routes:
+        - id: health
+          uri: http://localhost:8080
+          predicates:
+            - Path=/actuator/health
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
+
+logging:
+  level:
+    root: INFO
+    com.gateway.smart.pay.hub.sph: DEBUG
+
+# Resilience4j defaults for gateway
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 100
+        minimumNumberOfCalls: 10
+        permittedNumberOfCallsInHalfOpenState: 10
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+  retry:
+    configs:
+      default:
+        maxAttempts: 3
+        waitDuration: 500ms
+
+# Downstream service discovery placeholders
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 10000
+
+---
+
+spring:
+  profiles: prod
+  application:
+    name: sph-api-gateway
+  server:
+    port: ${SERVER_PORT:8080}
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
+
+logging:
+  level:
+    root: INFO
+    com.gateway.smart.pay.hub.sph: INFO
+

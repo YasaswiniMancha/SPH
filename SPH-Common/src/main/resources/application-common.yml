@@ -1,0 +1,72 @@
+# Shared configuration fragments for SmartPayHub services
+spring:
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+  # Kafka producer defaults tuned for high-throughput event publishing. Services may override per-module.
+  kafka:
+    producer:
+      # high durability and ordering for payment events
+      acks: all
+      retries: 5
+      batch-size: 32768
+      linger-ms: 50
+      buffer-memory: 33554432
+      compression-type: snappy
+      enable-idempotence: true
+      max-in-flight-requests-per-connection: 1
+      # low-level producer properties go under 'properties' and are passed to the client
+      properties:
+        delivery.timeout.ms: 120000
+        max.request.size: 1048576
+
+  # HikariCP settings recommended as a starting point for 10k TPS workloads.
+  datasource:
+    hikari:
+      maximum-pool-size: 50
+      minimum-idle: 10
+      connection-timeout: 30000
+      validation-timeout: 5000
+      max-lifetime: 1800000 # 30 minutes
+      leak-detection-threshold: 2000
+      data-source-properties:
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+        useServerPrepStmts: true
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %logger{36} - %msg %n"
+
+management:
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+# Default resilience4j configuration used across services
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 100
+        minimumNumberOfCalls: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+  retry:
+    configs:
+      default:
+        maxAttempts: 3
+        waitDuration: 500ms
+
+# Thread-pool tuning for high throughput (used by task executors)
+task:
+  executors:
+    default:
+      corePoolSize: 50
+      maxPoolSize: 200
+      queueCapacity: 1000
+

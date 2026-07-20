@@ -1,0 +1,100 @@
+# Values for SmartPayHub multi-service deployment
+replicaCount: 2
+image:
+  repository: smartpayhub
+  pullPolicy: IfNotPresent
+
+
+# Services to deploy
+services:
+  - name: sph-api-gateway
+    image: smartpayhub/sph-api-gateway:latest
+    port: 8080
+  - name: sph-auth-service
+    image: smartpayhub/sph-auth-service:latest
+    port: 8081
+  - name: sph-payments-service
+    image: smartpayhub/sph-payments-service:latest
+    port: 8082
+  - name: sph-wallet-service
+    image: smartpayhub/sph-wallet-service:latest
+    port: 8083
+  - name: sph-merchant-service
+    image: smartpayhub/sph-merchant-service:latest
+    port: 8084
+  - name: sph-settlement-service
+    image: smartpayhub/sph-settlement-service:latest
+    port: 8085
+  - name: sph-transaction-history
+    image: smartpayhub/sph-transaction-history:latest
+    port: 8086
+  - name: sph-notifications-service
+    image: smartpayhub/sph-notifications-service:latest
+    port: 8087
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 200m
+    memory: 256Mi
+
+env:
+  spring_profiles_active: prod
+  # Database
+  database_url: jdbc:postgresql://postgres:5432/smartpayhub
+  database_username: postgres
+  database_password: password
+  # Redis
+  redis_host: redis
+  redis_port: 6379
+  # Kafka
+  kafka_bootstrap_servers: kafka:9092
+
+
+# Optional production-tuning fragments exposed to Helm values. These are example producer & Hikari settings
+# you can tune per-environment and then mount into ConfigMap or pass as environment variables.
+kafkaProducer:
+  # Example producer tuning for high throughput and durability
+  acks: "all"
+  retries: 5
+  lingerMs: 50
+  batchSize: 32768
+  bufferMemory: 33554432
+  compressionType: snappy
+  enableIdempotence: true
+  maxInFlightRequestsPerConnection: 1
+  deliveryTimeoutMs: 120000
+
+hikari:
+  # HikariCP sensible defaults for high-load services (adjust per instance and DB limits)
+  maximumPoolSize: 50
+  minimumIdle: 10
+  connectionTimeout: 30000
+  validationTimeout: 5000
+  maxLifetime: 1800000
+  leakDetectionThreshold: 2000
+  dataSourceProperties:
+    cachePrepStmts: true
+    prepStmtCacheSize: 250
+    prepStmtCacheSqlLimit: 2048
+    useServerPrepStmts: true
+
+livenessProbe:
+  initialDelaySeconds: 30
+  periodSeconds: 30
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 3
+  failureThreshold: 3
+
+# Helm chart will create k8s secrets for credentials when provided
+secrets:
+  dbPasswordSecret: ""
+  jwtSigningKey: ""
+

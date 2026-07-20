@@ -1,0 +1,77 @@
+spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+---
+
+spring:
+  profiles: dev
+  application:
+    name: sph-auth-service
+  server:
+    port: ${SERVER_PORT:8081}
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/sph_auth}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:password}
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+
+security:
+  jwt:
+    signing-key: ${JWT_SIGNING_KEY:replace-with-secret}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+
+logging:
+  level:
+    root: INFO
+    com.auth.smart.pay.hub.sph: DEBUG
+
+# Resilience4j
+resilience4j:
+  circuitbreaker:
+    instances:
+      authService:
+        slidingWindowSize: 50
+        failureRateThreshold: 60
+
+---
+
+spring:
+  profiles: prod
+  application:
+    name: sph-auth-service
+  server:
+    port: ${SERVER_PORT:8081}
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT:6379}
+
+security:
+  jwt:
+    signing-key: ${JWT_SIGNING_KEY}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+
+logging:
+  level:
+    root: INFO
+    com.auth.smart.pay.hub.sph: INFO
+

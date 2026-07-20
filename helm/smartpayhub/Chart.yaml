@@ -1,0 +1,13 @@
+apiVersion: v2
+name: smartpayhub
+description: Helm chart to deploy SmartPayHub microservices (API Gateway, Auth, Merchant, Payments, Wallet, Ledger, Notifications, Settlement)
+version: 0.1.0
+appVersion: "0.0.1"
+keywords:
+  - smartpayhub
+  - payment
+  - microservices
+maintainers:
+  - name: Yasaswini Mancha
+    email: yasaswinimancha@gmail.com
+

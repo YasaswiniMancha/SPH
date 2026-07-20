@@ -1,0 +1,113 @@
+{{- range .Values.services }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .name }}
+  labels:
+    app: {{ .name }}
+spec:
+  replicas: {{ $.Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .name }}
+    spec:
+      containers:
+        - name: {{ .name }}
+          image: {{ .image }}
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .port }}
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "{{ $.Values.env.spring_profiles_active }}"
+            - name: SPRING_DATASOURCE_URL
+              value: "{{ $.Values.env.database_url }}"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "{{ $.Values.env.database_username }}"
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .name }}-secrets
+                  key: db.password
+            - name: REDIS_HOST
+              value: "{{ $.Values.env.redis_host }}"
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: "{{ $.Values.env.kafka_bootstrap_servers }}"
+            {{- if $.Values.kafkaProducer }}
+            - name: SPRING_KAFKA_PRODUCER_ACKS
+              value: "{{ $.Values.kafkaProducer.acks }}"
+            - name: SPRING_KAFKA_PRODUCER_RETRIES
+              value: "{{ $.Values.kafkaProducer.retries }}"
+            - name: SPRING_KAFKA_PRODUCER_LINGER_MS
+              value: "{{ $.Values.kafkaProducer.lingerMs }}"
+            - name: SPRING_KAFKA_PRODUCER_BATCH_SIZE
+              value: "{{ $.Values.kafkaProducer.batchSize }}"
+            - name: SPRING_KAFKA_PRODUCER_BUFFER_MEMORY
+              value: "{{ $.Values.kafkaProducer.bufferMemory }}"
+            - name: SPRING_KAFKA_PRODUCER_COMPRESSION_TYPE
+              value: "{{ $.Values.kafkaProducer.compressionType }}"
+            - name: SPRING_KAFKA_PRODUCER_ENABLE_IDEMPOTENCE
+              value: "{{ $.Values.kafkaProducer.enableIdempotence }}"
+            - name: SPRING_KAFKA_PRODUCER_MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION
+              value: "{{ $.Values.kafkaProducer.maxInFlightRequestsPerConnection }}"
+            - name: SPRING_KAFKA_PRODUCER_DELIVERY_TIMEOUT_MS
+              value: "{{ $.Values.kafkaProducer.deliveryTimeoutMs }}"
+            {{- end }}
+
+            {{- if $.Values.hikari }}
+            - name: SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE
+              value: "{{ $.Values.hikari.maximumPoolSize }}"
+            - name: SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE
+              value: "{{ $.Values.hikari.minimumIdle }}"
+            - name: SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT
+              value: "{{ $.Values.hikari.connectionTimeout }}"
+            - name: SPRING_DATASOURCE_HIKARI_VALIDATION_TIMEOUT
+              value: "{{ $.Values.hikari.validationTimeout }}"
+            - name: SPRING_DATASOURCE_HIKARI_MAX_LIFETIME
+              value: "{{ $.Values.hikari.maxLifetime }}"
+            - name: SPRING_DATASOURCE_HIKARI_LEAK_DETECTION_THRESHOLD
+              value: "{{ $.Values.hikari.leakDetectionThreshold }}"
+            {{- with $.Values.hikari.dataSourceProperties }}
+            - name: SPRING_DATASOURCE_HIKARI_DATASOURCE_PROPS_CACHE_PREP_STMTS
+              value: "{{ .cachePrepStmts }}"
+            - name: SPRING_DATASOURCE_HIKARI_DATASOURCE_PROPS_PREP_STMT_CACHE_SIZE
+              value: "{{ .prepStmtCacheSize }}"
+            - name: SPRING_DATASOURCE_HIKARI_DATASOURCE_PROPS_PREP_STMT_CACHE_SQL_LIMIT
+              value: "{{ .prepStmtCacheSqlLimit }}"
+            - name: SPRING_DATASOURCE_HIKARI_DATASOURCE_PROPS_USE_SERVER_PREP_STMTS
+              value: "{{ .useServerPrepStmts }}"
+            {{- end }}
+            {{- end }}
+          envFrom:
+            - configMapRef:
+                name: {{ .name }}-config
+          resources:
+            limits:
+              cpu: {{ $.Values.resources.limits.cpu }}
+              memory: {{ $.Values.resources.limits.memory }}
+            requests:
+              cpu: {{ $.Values.resources.requests.cpu }}
+              memory: {{ $.Values.resources.requests.memory }}
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: {{ .port }}
+            initialDelaySeconds: {{ $.Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ $.Values.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ $.Values.livenessProbe.timeoutSeconds }}
+            failureThreshold: {{ $.Values.livenessProbe.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: {{ .port }}
+            initialDelaySeconds: {{ $.Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ $.Values.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ $.Values.readinessProbe.timeoutSeconds }}
+            failureThreshold: {{ $.Values.readinessProbe.failureThreshold }}
+---
+{{- end }}
+

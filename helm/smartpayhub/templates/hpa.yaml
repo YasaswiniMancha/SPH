@@ -1,0 +1,3 @@
+# HPA templates intentionally disabled. Kept placeholder file to avoid accidental deletion.
+# Per request, no Kubernetes autoscaling changes were applied.
+

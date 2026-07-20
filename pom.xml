@@ -1,51 +1,117 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.5</version>
-        <relativePath/>
-    </parent>
-
     <groupId>com.smart.pay.hub.sph</groupId>
-    <artifactId>SmartPayHub-parent</artifactId>
+    <artifactId>SmartPayHub</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>SmartPayHub-parent</name>
+
     <description>Parent aggregator for SmartPayHub microservices</description>
 
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.5.4</version>
+        <relativePath/>
+    </parent>
+
     <properties>
-        <java.version>21</java.version>
-        <spring-cloud.version>2025.1.1</spring-cloud.version>
+
+        <java.version>25</java.version>
+
+        <spring-cloud.version>2025.0.0</spring-cloud.version>
+
+        <lombok.version>1.18.42</lombok.version>
+
+        <resilience4j.version>2.3.0</resilience4j.version>
+
+        <maven.compiler.release>25</maven.compiler.release>
+
     </properties>
 
     <modules>
+        <module>SPH-Common</module>
         <module>SPH-ApiGateway</module>
         <module>SPH-AuthService</module>
-        <module>SPH-CloudConfigManagement</module>
-        <module>SPH-Common</module>
         <module>SPH-MerchantService</module>
+        <module>SPH-LedgerService</module>
         <module>SPH-NotificationsService</module>
         <module>SPH-PaymentsService</module>
         <module>SPH-SettlementService</module>
-        <module>SPH-TransactionHistory</module>
         <module>SPH-WalletService</module>
+
     </modules>
 
     <dependencyManagement>
+
         <dependencies>
+
             <dependency>
+
                 <groupId>org.springframework.cloud</groupId>
+
                 <artifactId>spring-cloud-dependencies</artifactId>
+
                 <version>${spring-cloud.version}</version>
+
                 <type>pom</type>
+
                 <scope>import</scope>
+
             </dependency>
+
         </dependencies>
+
     </dependencyManagement>
+
+    <build>
+
+        <pluginManagement>
+
+            <plugins>
+
+                <plugin>
+
+                    <groupId>org.apache.maven.plugins</groupId>
+
+                    <artifactId>maven-compiler-plugin</artifactId>
+
+                    <version>3.14.1</version>
+
+                    <configuration>
+
+                        <release>${maven.compiler.release}</release>
+
+                        <annotationProcessorPaths>
+
+                            <path>
+
+                                <groupId>org.projectlombok</groupId>
+
+                                <artifactId>lombok</artifactId>
+
+                                <version>${lombok.version}</version>
+
+                            </path>
+
+                        </annotationProcessorPaths>
+
+                    </configuration>
+
+                </plugin>
+
+            </plugins>
+
+        </pluginManagement>
+
+    </build>
+
 </project>

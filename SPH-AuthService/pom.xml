@@ -1,24 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
          https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- ============================= -->
-    <!-- PARENT -->
-    <!-- ============================= -->
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.5</version>
-        <relativePath/>
+        <groupId>com.smart.pay.hub.sph</groupId>
+        <artifactId>SmartPayHub</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <!-- ============================= -->
-    <!-- PROJECT INFO -->
-    <!-- ============================= -->
+    <properties>
+
+        <java.version>25</java.version>
+
+        <spring-cloud.version>2025.0.0</spring-cloud.version>
+
+        <resilience4j.version>2.3.0</resilience4j.version>
+
+        <lombok.version>1.18.42</lombok.version>
+
+        <jjwt.version>0.12.7</jjwt.version>
+        <springdoc.version>3.0.3</springdoc.version>
+
+
+    </properties>
+
     <groupId>com.auth.smart.pay.hub.sph</groupId>
     <artifactId>SPH-AuthService</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -26,37 +37,7 @@
     <description>Authentication Microservice for SmartPayHub</description>
     <packaging>jar</packaging>
 
-    <!-- ============================= -->
-    <!-- PROPERTIES -->
-    <!-- ============================= -->
-    <properties>
-        <java.version>21</java.version>
-        <spring-cloud.version>2023.0.3</spring-cloud.version>
-        <jjwt.version>0.12.6</jjwt.version>
-        <resilience4j.version>2.2.0</resilience4j.version>
-    </properties>
 
-    <!-- ============================= -->
-    <!-- DEPENDENCY MANAGEMENT -->
-    <!-- ============================= -->
-    <dependencyManagement>
-        <dependencies>
-
-            <!-- Spring Cloud BOM -->
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>${spring-cloud.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-        </dependencies>
-    </dependencyManagement>
-
-    <!-- ============================= -->
-    <!-- DEPENDENCIES -->
-    <!-- ============================= -->
     <dependencies>
 
         <!-- WEB -->
@@ -123,6 +104,20 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
+        <!-- OpenAPI / Swagger -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${springdoc.version}</version>
+
+        </dependency>
+
+        <!-- Micrometer Prometheus Registry -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
 
         <!-- JWT -->
@@ -201,35 +196,81 @@
 
     </dependencies>
 
-    <!-- ============================= -->
-    <!-- BUILD -->
-    <!-- ============================= -->
     <build>
+
         <plugins>
 
-            <!-- SPRING BOOT -->
             <plugin>
+
                 <groupId>org.springframework.boot</groupId>
+
                 <artifactId>spring-boot-maven-plugin</artifactId>
+
+                <configuration>
+
+                    <excludes>
+
+                        <exclude>
+
+                            <groupId>org.projectlombok</groupId>
+
+                            <artifactId>lombok</artifactId>
+
+                        </exclude>
+
+                    </excludes>
+
+                </configuration>
+
             </plugin>
 
-            <!-- COMPILER -->
             <plugin>
+
                 <groupId>org.apache.maven.plugins</groupId>
+
                 <artifactId>maven-compiler-plugin</artifactId>
+
+                <version>3.14.1</version>
+
                 <configuration>
-                    <source>21</source>
-                    <target>21</target>
+
+                    <release>25</release>
+
                     <annotationProcessorPaths>
+
                         <path>
+
                             <groupId>org.projectlombok</groupId>
+
                             <artifactId>lombok</artifactId>
+
+                            <version>${lombok.version}</version>
+
                         </path>
+
                     </annotationProcessorPaths>
+
                 </configuration>
+
             </plugin>
 
         </plugins>
+
     </build>
+
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+
 
 </project>

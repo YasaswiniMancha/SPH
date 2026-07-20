@@ -1,17 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
          https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.5</version>
-		<relativePath/>
+		<groupId>com.smart.pay.hub.sph</groupId>
+		<artifactId>SmartPayHub</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
+
+	<properties>
+
+		<java.version>25</java.version>
+
+		<spring-cloud.version>2025.0.0</spring-cloud.version>
+
+		<resilience4j.version>2.3.0</resilience4j.version>
+
+		<lombok.version>1.18.42</lombok.version>
+
+		<springdoc.version>3.0.3</springdoc.version>
+
+	</properties>
 
 	<groupId>com.common.smart.pay.hub.sph</groupId>
 	<artifactId>SPH-Common</artifactId>
@@ -20,9 +35,6 @@
 	<description>Common Utilities and Models for SmartPayHub Microservices</description>
 	<packaging>jar</packaging>
 
-	<properties>
-		<java.version>21</java.version>
-	</properties>
 
 	<dependencies>
 		<!-- Spring Boot Starter -->
@@ -42,11 +54,43 @@
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>${springdoc.version}</version>
+		</dependency>
+
 		<!-- Lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
+		</dependency>
+
+		<!-- Thymeleaf (managed by Spring Boot BOM) -->
+		<dependency>
+			<groupId>org.thymeleaf</groupId>
+			<artifactId>thymeleaf</artifactId>
+		</dependency>
+
+		<!-- HTML to PDF renderer (OpenHTMLToPDF) -->
+		<dependency>
+			<groupId>com.openhtmltopdf</groupId>
+			<artifactId>openhtmltopdf-pdfbox</artifactId>
+			<version>1.0.10</version>
+		</dependency>
+
+		<!-- Micrometer Prometheus Registry -->
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-prometheus</artifactId>
+		</dependency>
+
+		<!-- AWS S3 SDK (v2) for S3 integration; used by cloud storage helpers -->
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>s3</artifactId>
+			<version>2.20.86</version>
 		</dependency>
 
 		<!-- Testing -->
@@ -60,36 +104,80 @@
 	</dependencies>
 
 	<build>
+
 		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<classifier>exec</classifier>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
+
+		<plugin>
+
+			<groupId>org.springframework.boot</groupId>
+
+			<artifactId>spring-boot-maven-plugin</artifactId>
+
+			<configuration>
+
+				<skip>true</skip>
+
+				<excludes>
+
+					<exclude>
+
+						<groupId>org.projectlombok</groupId>
+
+						<artifactId>lombok</artifactId>
+
+					</exclude>
+
+				</excludes>
+
+			</configuration>
+
+		</plugin>
 
 			<plugin>
+
 				<groupId>org.apache.maven.plugins</groupId>
+
 				<artifactId>maven-compiler-plugin</artifactId>
+
+				<version>3.14.1</version>
+
 				<configuration>
-					<source>21</source>
-					<target>21</target>
+
+					<release>25</release>
+
 					<annotationProcessorPaths>
+
 						<path>
+
 							<groupId>org.projectlombok</groupId>
+
 							<artifactId>lombok</artifactId>
+
+							<version>${lombok.version}</version>
+
 						</path>
+
 					</annotationProcessorPaths>
+
 				</configuration>
+
 			</plugin>
+
 		</plugins>
+
 	</build>
+
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 </project>
